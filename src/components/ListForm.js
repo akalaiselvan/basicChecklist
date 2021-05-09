@@ -1,16 +1,36 @@
-import React from 'react';
-import { View } from 'react-native';
-import { FlatList } from 'react-native';
-import {Text} from 'react-native-elements'
+import React, { useContext } from 'react';
+import { StyleSheet,View,TouchableOpacity } from 'react-native';
+import {ListBox} from '../components/ListItem';
+import DraggableFlatList from 'react-native-draggable-flatlist';
+import {Context as CheckListContext} from '../context/CheckListContext';
 
-const ListForm=({list})=>{
-    return <FlatList
-            data={list}
-            keyExtractor={i=>Math.floor(Math.random()*9999)}
-            renderItem={({item})=>{ 
-                return <Text>{item}</Text>
+const ListForm=({list,id})=>{ 
+    
+    const {contDrag}=useContext(CheckListContext);
+    return (<View style={styles.cont}>
+             <DraggableFlatList
+                data={list}
+                keyExtractor={i=>i.id.toString()}
+                renderItem={({item,index,drag,isActive})=>{
+                    return <TouchableOpacity                             
+                                style={{
+                                        height: 50,
+                                        alignItems: "stretch",
+                                        justifyContent: "center",
+                                }}
+                                onLongPress={drag}>
+                          <ListBox pid={id} item={item}/>
+                    </TouchableOpacity>
             }}
-        />
+                onDragEnd={(data)=>contDrag(id,data)}
+            /> 
+        </View>)   
 }
+
+const styles=StyleSheet.create({
+    cont:{
+        height:'100%'
+    }
+});
 
 export default ListForm;

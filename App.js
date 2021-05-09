@@ -7,16 +7,26 @@ import Checklists from './src/screens/Checklists';
 import ShowList from './src/screens/ShowList'; 
 import Settings from './src/screens/Settings';
 import {Provider as ChecklistProvider} from './src/context/CheckListContext';
+import ListView from './src/components/ListView';
+import EditList from './src/screens/EditList';
+import { Entypo } from '@expo/vector-icons';
 
+const lists =createStackNavigator({
+      Checklists:Checklists,
+      AddList:AddList,
+      ShowList:ShowList,
+      ListView:ListView,
+      EditList:EditList
+});
+
+lists.navigationOptions={
+  title:'Lists',
+  tabBarIcon:<Entypo name="list" size={24} color="black" />
+}
 
 const mainNavigation=createSwitchNavigator({
   mainflow:createBottomTabNavigator({
-    //AddList:AddList,
-    ChecklistFlow:createStackNavigator({
-      Checklists:Checklists,
-      AddList:AddList,
-      ShowList:ShowList
-    }),
+    ChecklistFlow:lists,
     Settings:Settings
   })
 });
