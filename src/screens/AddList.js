@@ -46,12 +46,12 @@ const AddList=({navigation})=>{
 
     const listRef=useRef(null);
     const titRef=useRef(null);
-    return <SafeAreaView>   
+    return <View style={[styles.view,{backgroundColor:state.bgColor}]}>   
         <View>
             <View style={styles.head}>
                 <TextInput autoFocus placeholder='Give some title'
                         ref={titRef}
-                        style={styles.right}
+                        style={[styles.right,{fontFamily:state.font}]}
                         value={title}
                         onChangeText={(v)=>setTitle(v)}
                         onSubmitEditing={()=>listRef.current.focus()}
@@ -59,7 +59,7 @@ const AddList=({navigation})=>{
                 <Spacer/>
                 <TextInput placeholder='Add checklist' 
                     ref={listRef}
-                    style={styles.input} 
+                    style={[styles.input,{fontFamily:state.font}]} 
                     value={value} 
                     onChangeText={(v)=>setValue(v)}
                     onSubmitEditing={addClist}
@@ -74,10 +74,14 @@ const AddList=({navigation})=>{
             <Spacer/>
                 <Button title='save' onPress={saveChecklist}/>
             </View>
-    </SafeAreaView>
+    </View>
 }
 
 const styles=StyleSheet.create({
+    view:{
+        flex:1,
+        justifyContent:'flex-start',
+    },
     head:{
         //backgroundColor:'blue',
         height:20,
@@ -102,7 +106,7 @@ const styles=StyleSheet.create({
         bottom:10,
         left:250,
         width:100
-    }
+    },
 });
 
 

@@ -3,14 +3,14 @@ import { StyleSheet ,View ,Text,TouchableOpacity} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {Context as CheckListContext} from '../context/CheckListContext'; 
 import { MaterialIcons } from '@expo/vector-icons';
-import { TextInput } from 'react-native';
 
-const ListItem=({item,del})=>{
+const ListItem=({item,del,font})=>{
 
     return<View >
-        <View style={styles.item}>
-                <Text style={styles.text}>{item.title}</Text> 
-                <TouchableOpacity style={styles.options} onPress={()=>del(item.id)}>
+        <View style={styles.item} >
+                <Text style={[styles.text,{fontFamily:font}]}>{item.title}</Text> 
+                <TouchableOpacity style={styles.options}
+                                    onPress={()=>del(item.id)}>
                         <MaterialIcons name="delete" size={28} color="black" />
                 </TouchableOpacity>
         </View>   
@@ -19,17 +19,13 @@ const ListItem=({item,del})=>{
 
 const ListBox=({pid,item})=>{
 
-    const {switchCheck}=useContext(CheckListContext);
-    const [val,setval]=useState(item.value);
+    const {switchCheck,state:{font}}=useContext(CheckListContext);
     return <View style={styles.boxItem}>
         {pid?
               <CheckBox 
               value={item.isSelected}
               onValueChange={(v)=>switchCheck(pid,item.id,v)}/>:null}
-        {pid?<TextInput value={val} onChangeText={setval}/>      
-              :
-              <Text style={styles.boxtext}>{item.value}</Text> 
-             }
+              <Text style={[styles.boxtext,{fontFamily:font}]}>{item.value}</Text> 
 </View>
 }
 

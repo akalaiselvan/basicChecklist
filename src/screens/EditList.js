@@ -33,18 +33,17 @@ const EditList=({navigation})=>{
 
     const save=(id,clist)=>{
         updateList(id,clist,title)
-        navigation.navigate('Checklists');
         navigation.navigate('ListView',{id:item.id})
     }
 
     const listRef=useRef(null);
     const titRef=useRef(null);
 
-    return<View style={styles.content}>
+    return<View style={[styles.content,{backgroundColor:state.bgColor}]}>
             <View style={styles.head}>
                         <TextInput autoFocus placeholder='Give some title'
                                 ref={titRef}
-                                style={styles.right}
+                                style={[styles.right,{fontFamily:state.font}]}
                                 value={title}
                                 onChangeText={(v)=>setTitle(v)}
                                 onSubmitEditing={()=>listRef.current.focus()}
@@ -53,7 +52,7 @@ const EditList=({navigation})=>{
                         <Spacer/>
                         <TextInput placeholder='Add checklist' 
                             ref={listRef}
-                            style={styles.inputs} 
+                            style={[styles.inputs,{fontFamily:state.font}]} 
                             value={val} 
                             onChangeText={(v)=>setval(v)}
                             onSubmitEditing={addClist}
@@ -71,7 +70,7 @@ const EditList=({navigation})=>{
                                         textAlignVertical='center'
                                         marginLeft={15}
                                         onChangeText={(val)=>update(item.id,val)}
-                                        style={styles.input}
+                                        style={[styles.input,{fontFamily:state.font}]}
                                         />
 
                        </View>
@@ -86,7 +85,7 @@ const EditList=({navigation})=>{
 
 const styles=StyleSheet.create({
     content:{
-        height:'85%'
+        flex:1
     },
     bottom:{
         //backgroundColor:'red',
@@ -124,7 +123,7 @@ const styles=StyleSheet.create({
     },
     right:{
         marginLeft:50
-    }
+    },
 });
 
 export default EditList;

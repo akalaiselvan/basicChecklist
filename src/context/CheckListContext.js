@@ -39,7 +39,16 @@ const reducer=(state,actions)=>{
             const index=lis.findIndex(f=>f.id===actions.payload.id)
             lis[index].lists=actions.payload.lists;
             return {...state,list:lis}
-
+        case 'theme':
+            if(state.bgColor==='#071815')
+                return {...state,bgColor:'#eaf3f1'}
+            else{
+                return {...state,bgColor:'#071815'}
+            }
+        case 'font':
+            return {...state,font:actions.payload}    
+        case 'removeAll':
+            return {...state,list:[]}        
         default:
             return state;
     }
@@ -70,11 +79,17 @@ const updateList=dispatch=>(id,clist,title)=>{
     dispatch({type:'update',payload:{id:id,lists:clist,title:title}});
 }
 
-const refresh=dispatch=>()=>{
-    console.log('refreshed');
-    dispatch({type:'refresh'})
+const switchTheme=dispatch=>()=>{
+    dispatch({type:'theme'})
 }
 
+const switchFonts=dispatch=>(value)=>{
+    dispatch({type:'font',payload:value})
+}
+
+const removeAll=dispatch=>()=>{
+    dispatch({type:'removeAll'});
+}
 
 export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                         switchCheck,
@@ -82,7 +97,9 @@ export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                         dragged,
                                                         contDrag,
                                                         updateList,
-                                                        refresh
+                                                        switchTheme,
+                                                        switchFonts,
+                                                        removeAll
                                                     },
                                                     {list:[
                                                         {
@@ -95,4 +112,7 @@ export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                         lists:[{id:3,value:'item3',isSelected:false},{id:4,value:'item4',isSelected:false}],
                                                         id:123202,
                                                         },
-                                                   ]});
+                                                   ],
+                                                   bgColor:'#071815',
+                                                   font:'normal'
+                                                });

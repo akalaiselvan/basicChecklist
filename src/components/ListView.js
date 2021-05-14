@@ -1,18 +1,14 @@
 import React, { useContext, useEffect } from 'react';
-import {View,TouchableOpacity} from 'react-native';
+import {View,TouchableOpacity,StyleSheet} from 'react-native';
 import {Context as CheckListContext} from '../context/CheckListContext';
 import ListForm from '../components/ListForm';
 import { EvilIcons } from '@expo/vector-icons'; 
 const ListView=({navigation})=>{
 
-    useEffect(()=>{
-        refresh();
-    });
-
-    const {state,refresh}=useContext(CheckListContext);
+    const {state}=useContext(CheckListContext);
     const id=navigation.getParam('id');
     const item=state.list.find(t=>t.id===id);
-    return <View>
+    return <View style={{backgroundColor:state.bgColor}}>
         <ListForm list={item.lists} id={id}/>
     </View>
 }

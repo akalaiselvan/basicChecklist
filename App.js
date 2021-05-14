@@ -4,7 +4,6 @@ import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {createStackNavigator} from 'react-navigation-stack';
 import AddList from './src/screens/AddList'; 
 import Checklists from './src/screens/Checklists'; 
-import ShowList from './src/screens/ShowList'; 
 import Settings from './src/screens/Settings';
 import {Provider as ChecklistProvider} from './src/context/CheckListContext';
 import ListView from './src/components/ListView';
@@ -14,7 +13,6 @@ import { Entypo } from '@expo/vector-icons';
 const lists =createStackNavigator({
       Checklists:Checklists,
       AddList:AddList,
-      ShowList:ShowList,
       ListView:ListView,
       EditList:EditList
 });
