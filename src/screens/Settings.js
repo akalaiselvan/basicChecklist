@@ -10,9 +10,9 @@ import { TouchableOpacity } from 'react-native';
 import {Context as CheckListContext} from '../context/CheckListContext';
 import SelectFont from '../components/SelectFont';
 
-const Settings=()=>{
+const Settings=({navigation})=>{
 
-    const {switchTheme,removeAll,switchFonts,state:{bgColor,font}} = useContext(CheckListContext);
+    const {switchTheme,removeAll,switchFonts,state:{bgColor,font},state} = useContext(CheckListContext);
     const iconStyle=styles.icon;
     const Font=<FontAwesome name="font" color="black" style={iconStyle}/>
     const theme=<Entypo name="feather" color="black" style={iconStyle}/>
@@ -21,9 +21,11 @@ const Settings=()=>{
     const [fs,setsf]=useState(false);
     const switchFont=(value)=>{
         console.log(`font is ${font}`);
+        console.log('State is '+JSON.stringify(state))
         setsf(!fs)
         switchFonts(value);
     }
+
 
     const showAlert=(text,func)=>
         Alert.alert('Confirmation',text,

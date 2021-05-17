@@ -25,13 +25,13 @@ lists.navigationOptions={
 const mainNavigation=createSwitchNavigator({
   mainflow:createBottomTabNavigator({
     ChecklistFlow:lists,
-    Settings:Settings
+    Settings:Settings,     
   })
 });
 
 const App=createAppContainer(mainNavigation);
 export default()=>{
-  return <ChecklistProvider>
-    <App/>
-  </ChecklistProvider>
+  return<ChecklistProvider>
+                <App/>
+        </ChecklistProvider>
 }

@@ -1,4 +1,5 @@
 import createContext from './createContext';
+import {database} from '../DB/database';
 
 const reducer=(state,actions)=>{
     switch(actions.type){
@@ -49,6 +50,39 @@ const reducer=(state,actions)=>{
             return {...state,font:actions.payload}    
         case 'removeAll':
             return {...state,list:[]}        
+        case 'setInitial':
+                console.log('hmm'+JSON.stringify(state.hdr));
+                const header=actions.payload.hdr;
+                const detail=actions.payload.list;
+                const bgColor=actions.payload.misc[0].bgColor;
+                const font=actions.payload.misc[0].font;
+    
+                const hdrList=header.map(hitem=>{
+                let hdrListObj={};
+                hdrListObj.title=hitem.title,
+                hdrListObj.id=hitem.id,
+                hdrListObj.lists=detail.filter(item=>{
+                    if(item.pid===hitem.id){
+                    let listObj={}
+                    listObj.id=item.id;
+                    listObj.value=item.value;
+                    listObj.isSelected=item.isSelected;
+                    return listObj
+                    }
+                });
+                return hdrListObj
+                });
+    
+                const stateObj={
+                    list:hdrList,
+                    bgColor:bgColor,
+                    font:font
+                }
+    
+                //console.log('LAST CHANCE : '+JSON.stringify(stateObj));
+                return stateObj;      
+            case 'setLoad':
+                return {...state,reqLoad:false}    
         default:
             return state;
     }
@@ -59,8 +93,9 @@ const addChecklist=dispatch=>({title,clist})=>{
 }
 
 const switchCheck=dispatch=>(pid,id,value)=>{
+    let check=value===true?'true':'false';
     console.log(`Received payoad id : ${pid}, id : ${id}, value :${value}`);
-    dispatch({type:'check',payload:{pid:pid,id:id,value:value}});
+    dispatch({type:'check',payload:{pid:pid,id:id,value:check}});
 }
 
 const deleteSelected=dispatch=>(id)=>{
@@ -91,6 +126,16 @@ const removeAll=dispatch=>()=>{
     dispatch({type:'removeAll'});
 }
 
+
+const setReqLoad=dispatch=>()=>{
+    dispatch({type:'setLoad'});
+}
+
+const setStates=dispatch=>(hdr,list,misc)=>{
+    console.log('Setting temp state'+JSON.stringify(hdr));
+    dispatch({type:'setInitial',payload:{hdr:hdr,list:list,misc:misc}})
+}
+
 export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                         switchCheck,
                                                         deleteSelected,
@@ -99,20 +144,42 @@ export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                         updateList,
                                                         switchTheme,
                                                         switchFonts,
-                                                        removeAll
+                                                        removeAll,
+                                                        setStates,
+                                                        setReqLoad
                                                     },
-                                                    {list:[
-                                                        {
-                                                        title:'Title',
-                                                        lists:[{id:1,value:'item',isSelected:false},{id:2,value:'itemw',isSelected:false}],
-                                                        id:123212,
-                                                        },
-                                                        {
-                                                        title:'Second',
-                                                        lists:[{id:3,value:'item3',isSelected:false},{id:4,value:'item4',isSelected:false}],
-                                                        id:123202,
-                                                        },
-                                                   ],
-                                                   bgColor:'#071815',
-                                                   font:'normal'
-                                                });
+                                                             {list:[
+                                                    // {
+                                                    // title:'Title',
+                                                    // lists:[{id:1,value:'item',isSelected:false},{id:2,value:'itemw',isSelected:false}],
+                                                    // id:123212,
+                                                    // },
+                                                    // {
+                                                    // title:'Second',
+                                                    // lists:[{id:3,value:'item3',isSelected:false},{id:4,value:'item4',isSelected:false}],
+                                                    // id:123202,
+                                                    // },
+                                               ],
+                                               bgColor:'#071815',
+                                               font:'normal',
+                                               reqLoad:true
+                                            }                                                   
+                                                   );
+
+
+
+                                            //        {list:[
+                                            //         {
+                                            //         title:'Title',
+                                            //         lists:[{id:1,value:'item',isSelected:false},{id:2,value:'itemw',isSelected:false}],
+                                            //         id:123212,
+                                            //         },
+                                            //         {
+                                            //         title:'Second',
+                                            //         lists:[{id:3,value:'item3',isSelected:false},{id:4,value:'item4',isSelected:false}],
+                                            //         id:123202,
+                                            //         },
+                                            //    ],
+                                            //    bgColor:'#071815',
+                                            //    font:'normal'
+                                            // }

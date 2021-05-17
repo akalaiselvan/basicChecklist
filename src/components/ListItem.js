@@ -20,10 +20,11 @@ const ListItem=({item,del,font})=>{
 const ListBox=({pid,item})=>{
 
     const {switchCheck,state:{font}}=useContext(CheckListContext);
+    let check=item.isSelected==='true'?true:false;
     return <View style={styles.boxItem}>
         {pid?
               <CheckBox 
-              value={item.isSelected}
+              value={check}
               onValueChange={(v)=>switchCheck(pid,item.id,v)}/>:null}
               <Text style={[styles.boxtext,{fontFamily:font}]}>{item.value}</Text> 
 </View>

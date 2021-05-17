@@ -1,7 +1,6 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import {StyleSheet} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {Context as CheckListContext} from '../context/CheckListContext';
 import ListItem from '../components/ListItem';
 import { Feather } from '@expo/vector-icons';
@@ -10,9 +9,29 @@ import { TouchableOpacity ,FlatList} from 'react-native';
 import Search from '../components/SearchBar';
 
 const Checklists=({navigation})=>{
-    const {state,dragged,deleteSelected}=useContext(CheckListContext);
+    const {state,deleteSelected,hdr,list,misc,setStates,isLoaded,setReqLoad}=useContext(CheckListContext);
+    console.log('Initial state is '+JSON.stringify(state));
     const [keyPress,setKeyPress]=useState(false);
+
+      const loadData=()=>{
+          console.log('IS LOADED ..? '+isLoaded)
+          if(isLoaded&&state.reqLoad){
+            if(hdr.length > 0 && list.length > 0 && misc.length>0){
+                console.log('Initial hdr is '+JSON.stringify(hdr));
+                console.log('Initial list is '+JSON.stringify(list));
+                console.log('Initial misc is '+JSON.stringify(misc));
+                setReqLoad();
+                setStates(hdr,list,misc);
+                }
+            }
+        };
+
+        useEffect(()=>{
+            loadData();
+        });
+
     
+
     return <View style={[styles.view,{backgroundColor:state.bgColor}]}>
         <Search/>
         <View style={styles.cont}>
