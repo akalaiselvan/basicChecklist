@@ -4,9 +4,16 @@ import {database} from '../DB/database';
 const reducer=(state,actions)=>{
     switch(actions.type){
         case 'add':
+            const pid=Math.round(new Date().getTime()/1000);
+            const cid=Math.round(new Date().getTime()/10000+1);
+            // database.insertHdr([pid,actions.payload.title]);
+            // actions.payload.clist.forEach(ele=>{
+            //     database.insertDtl([pid,cid,ele.value,false])
+            // })
+            addItem(pid,cid,actions.payload.title,actions.payload.clist);
             return {...state,list:[...state.list,{title:actions.payload.title,
                               lists:actions.payload.clist,
-                              id:Math.round(new Date().getTime()/1000),
+                              id:cid,
                               isSelected:false}]}
         case 'check':
                  let temp=[...state.list];
@@ -15,6 +22,7 @@ const reducer=(state,actions)=>{
                  temp[p].lists[c].isSelected=actions.payload.value;
                  return {...state,list:temp};
         case 'deleteSelected':
+            deleteItem(state.list,actions.payload)
             return {...state,list:state.list.filter(m=>m.id!==actions.payload)}
 
         case 'del_key':
@@ -87,6 +95,24 @@ const reducer=(state,actions)=>{
             return state;
     }
 }
+
+
+const deleteItem=(list,id)=>{
+    database.deleteHdr([id]);
+    list.forEach(ele=>{
+        if(ele.id===id){
+            database.deleteDtl([id]);
+        }
+    })
+}
+
+const addItem=(pid,cid,title,clist)=>{
+    database.insertHdr([pid,title]);
+    clist.forEach(ele=>{
+        database.insertDtl([pid,cid,ele.value,false])
+    })
+}
+
 
 const addChecklist=dispatch=>({title,clist})=>{
     dispatch({type:'add',payload:{title,clist}});

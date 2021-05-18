@@ -14,7 +14,7 @@ const lists =createStackNavigator({
       Checklists:Checklists,
       AddList:AddList,
       ListView:ListView,
-      EditList:EditList
+      EditList:EditList,
 });
 
 lists.navigationOptions={

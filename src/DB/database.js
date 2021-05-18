@@ -91,6 +91,43 @@ const insertQry = (qry,func) => {
 }
 
 
+const ExecuteInsert=(sql,params=[])=>new Promise((resolve,reject)=>{
+  db.transaction((tx)=>{
+    tx.executeSql(sql,params,(trans,results)=>{
+      resolve(results);
+    },
+    (error)=>{
+      reject(error);
+    });
+  });
+});
+
+
+const insertHdr=async(params)=>{
+  let insert= await ExecuteInsert("INSERT INTO list_hdr(id,title) VALUES (?,?)",params);
+  console.log('Insert result '+JSON.stringify(insert))
+}
+
+
+const insertDtl=async(params)=>{
+  let insert= await ExecuteInsert("INSERT INTO list_dtl(pid,id,value,isSelected) VALUES (?,?,?,?)",params);
+  console.log('Insert result '+JSON.stringify(insert))
+}
+
+const deleteHdr=async(params)=>{
+  console.log("delete from list_hdr where id="+params);
+  let insert= await ExecuteInsert("delete from list_hdr where id=?",params);
+  console.log('Delete result '+JSON.stringify(insert))
+}
+
+const deleteDtl=async(params)=>{
+  console.log("delete from list_dtl where pid="+params);
+  let insert= await ExecuteInsert("delete from list_dtl where pid=?",params);
+  console.log('Delete result '+JSON.stringify(insert))
+}
+
+
+
 
 const setupDatabaseAsync = async (create) => {
   return new Promise((resolve, reject) => {
@@ -121,5 +158,5 @@ export const database = {
   setupDatabaseAsync,
   setupUsersAsync,
   dropDatabaseTablesAsync,
-  loadDataAsync,insertQry
+  loadDataAsync,insertQry,insertHdr,insertDtl,deleteHdr,deleteDtl
 }
