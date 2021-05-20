@@ -1,5 +1,5 @@
 import React,{useState,useContext, useRef,useEffect} from 'react';
-import {Button} from 'react-native-elements';
+import {Button} from 'react-native';
 import Spacer from '../components/Spacer';
 import ListForm from '../components/ListForm';
 import {View,StyleSheet,TextInput } from 'react-native';
@@ -71,12 +71,16 @@ const AddList=({navigation})=>{
             </View> 
             <View style={styles.bottom}>     
             <Spacer/>
-                <Button title='save' onPress={saveChecklist}/>
+                <Button style={styles.button} title='save' onPress={saveChecklist}/>
             </View>
     </View>
 }
 
 const styles=StyleSheet.create({
+    button:{
+        backgroundColor: 'red',
+        borderRadius: 10,
+    },
     view:{
         flex:1,
         justifyContent:'flex-start',
@@ -103,7 +107,7 @@ const styles=StyleSheet.create({
         position:'absolute',
         height:100,
         bottom:10,
-        left:250,
+        left:160,
         width:100
     },
 });

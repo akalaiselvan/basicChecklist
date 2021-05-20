@@ -36,6 +36,7 @@ const reducer=(state,actions)=>{
         case 'dragged':
             return {...state,list:actions.payload} 
         case 'cont_drag':
+            updateAfterDrag(actions.payload.id,actions.payload.data);    
             return {...state,list:state.list.map(item=>{
                 if(item.id===actions.payload.id){
                     return{...item,lists:actions.payload.data}
@@ -118,6 +119,13 @@ const reducer=(state,actions)=>{
     }
 }
 
+const updateAfterDrag=(id,list)=>{
+    database.deleteDtl([id]);
+    list.forEach(ele=>{
+        database.insertDtl([ele.pid,ele.id,ele.value,ele.isSelected]);
+    });
+}
+
 
 const deleteItem=(list,id)=>{
     database.deleteHdr([id]);
@@ -132,7 +140,7 @@ const addItem=(pid,cid,title,clist)=>{
     database.insertHdr([pid,title]);
     let n=1;
     clist.forEach(ele=>{
-        database.insertDtl([pid,cid+n,ele.value,'false'])
+        database.insertDtl([pid,cid+n,ele.value,'false']);
         n++;
     })
 }
