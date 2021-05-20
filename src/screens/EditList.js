@@ -62,7 +62,7 @@ const EditList=({navigation})=>{
             </View>
         <FlatList
             data={clist}
-            keyExtractor={k=>k.id}
+            keyExtractor={k=>k.id.toString()}
             renderItem={({item})=>{
                 return <View>
                         <View style={styles.Item}>
