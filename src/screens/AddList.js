@@ -1,6 +1,5 @@
 import React,{useState,useContext, useRef,useEffect} from 'react';
 import {Button} from 'react-native-elements';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import Spacer from '../components/Spacer';
 import ListForm from '../components/ListForm';
 import {View,StyleSheet,TextInput } from 'react-native';

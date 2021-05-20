@@ -3,17 +3,20 @@ import { StyleSheet ,View ,Text,TouchableOpacity} from 'react-native';
 import CheckBox from '@react-native-community/checkbox';
 import {Context as CheckListContext} from '../context/CheckListContext'; 
 import { MaterialIcons } from '@expo/vector-icons';
+import { SimpleLineIcons } from '@expo/vector-icons';
 
-const ListItem=({item,del,font})=>{
+const ListItem=({item,func,font})=>{
 
     return<View >
-        <View style={styles.item} >
+            <View style={styles.item} >
                 <Text style={[styles.text,{fontFamily:font}]}>{item.title}</Text> 
                 <TouchableOpacity style={styles.options}
-                                    onPress={()=>del(item.id)}>
-                        <MaterialIcons name="delete" size={28} color="black" />
+                                    //onPress={()=>del(item.id)}>
+                                    onPress={()=>func()}>
+                        {/* <MaterialIcons name="delete" size={28} color="black" /> */}
+                        <SimpleLineIcons name="options-vertical" size={22} color="black" />
                 </TouchableOpacity>
-        </View>   
+            </View>   
             </View>
 }
 
@@ -63,8 +66,8 @@ const styles=StyleSheet.create({
         marginLeft:10
     },
     options:{
-        marginTop:10,
-        marginRight:15
+        marginTop:12,
+        marginRight:10
     },
     more:{
         display:'none',

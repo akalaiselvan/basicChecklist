@@ -62,6 +62,7 @@ const getLists = async (query,setList) => {
           query,
           [],
           (_, { rows: { _array } }) => {
+            console.log('Setting : '+JSON.stringify(_array.length))
             setList(_array)
           }
         );
@@ -71,6 +72,30 @@ const getLists = async (query,setList) => {
     );
   })
 }
+
+const setProps = async (query) => {
+  return new Promise((resolve,reject)=>{
+    db.transaction(
+      tx => {
+        tx.executeSql(
+          query,
+          [],
+          (_, { rows: { _array } }) => {
+            if(_array.length<1){
+              console.log('Default props not found setting default props');
+              ExecuteInsert("insert into app_prop values ('#eaf3f1','normal')");
+            }
+          }
+        );
+      },
+      (t, error)     => console.log("db error load users"),
+      (_t, _success) => console.log("loaded users")  
+    );
+  })
+}
+
+
+
 
 const insertUser = (userName, successFunc) => {
   db.transaction( tx => {
@@ -98,10 +123,31 @@ const ExecuteInsert=(sql,params=[])=>new Promise((resolve,reject)=>{
     },
     (error)=>{
       reject(error);
-    });
+    }),      
+    (_, success) => { 
+      resolve(success)
+    };
   });
 });
 
+const CreateTable=(sql,params=[])=>new Promise((resolve,reject)=>{
+  db.transaction((tx)=>{
+    tx.executeSql(sql,params,(trans,results)=>{
+      //console.log('table created results : '+JSON.stringify(results.rows._array));
+      const res=JSON.stringify(results.rows._array[0]);
+      console.log('Result is '+res);
+      resolve(results);
+    },
+    (error)=>{
+      console.log('ERROR : '+JSON.stringify(error));
+      reject(error);
+    }),      
+    (_, success) => { 
+      console.log('SUCC '+JSON.stringify(success));
+      resolve(success)
+    };
+  });
+});
 
 const insertHdr=async(params)=>{
   let insert= await ExecuteInsert("INSERT INTO list_hdr(id,title) VALUES (?,?)",params);
@@ -126,7 +172,30 @@ const deleteDtl=async(params)=>{
   console.log('Delete result '+JSON.stringify(insert))
 }
 
+const updateHdr=async(params)=>{
+  console.log("update list_hdr set title = "+params[0]+", where id = "+params[1])
+  let qry=await ExecuteInsert("update list_hdr set title = ? where id = ?",params)
+}
 
+const updateCheck=async(params)=>{
+  console.log("update list_dtl set isSelected="+params[0]+" where pid = "+params[1]+" and id ="+params[2]);
+  let qry = await ExecuteInsert("update list_dtl set isSelected = ? where pid = ? and id = ? ",params)
+  console.log('update check result : '+JSON.stringify(qry));
+}
+
+const updateTheme=async(params)=>{
+  console.log("update app_prop set bgColor = "+params[0]);
+  let qry=await ExecuteInsert("update app_prop set bgColor = ?",params);
+  console.log('update theme result : '+JSON.stringify(qry));
+
+}
+
+const updateFont=async(params)=>{
+  console.log("update app_prop set font = "+params[0])
+  let qry=await ExecuteInsert("update app_prop set font = ?",params)
+  console.log('update font result : '+JSON.stringify(qry));
+
+}
 
 
 const setupDatabaseAsync = async (create) => {
@@ -158,5 +227,7 @@ export const database = {
   setupDatabaseAsync,
   setupUsersAsync,
   dropDatabaseTablesAsync,
-  loadDataAsync,insertQry,insertHdr,insertDtl,deleteHdr,deleteDtl
+  loadDataAsync,insertQry,insertHdr,insertDtl,
+  deleteHdr,deleteDtl,updateHdr,ExecuteInsert,
+  updateCheck,updateTheme,updateFont,CreateTable,setProps
 }

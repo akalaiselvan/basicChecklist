@@ -20,10 +20,7 @@ const Settings=({navigation})=>{
     const remove=<MaterialCommunityIcons name="delete-variant" color="black" style={iconStyle}/>
     const [fs,setsf]=useState(false);
     const switchFont=(value)=>{
-        console.log(`font is ${font}`);
-        console.log('State is '+JSON.stringify(state))
-        setsf(!fs)
-        switchFonts(value);
+        setModalVisible(!modalVisible)
     }
 
 
@@ -42,9 +39,11 @@ const Settings=({navigation})=>{
                     cancelable:true,
                     onDismiss:()=>console.log('Cancelled the alert')
                 });
+                
+        const [modalVisible,setModalVisible]=useState(false);
 
     return <View style={[styles.cont,{backgroundColor:bgColor}]}>
-        {fs?<SelectFont switchFont={switchFont}/>:null}
+        {<SelectFont switchFonts={switchFonts} modalVisible={modalVisible} setModalVisible={setModalVisible}/>}
         <TouchableOpacity onPress={()=>switchFont()}>
             <Setting content='Font' Icon={Font} font={font}/>
         </TouchableOpacity>

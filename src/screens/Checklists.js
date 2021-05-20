@@ -7,19 +7,20 @@ import { Feather } from '@expo/vector-icons';
 import { TouchableHighlight } from 'react-native';
 import { TouchableOpacity ,FlatList} from 'react-native';
 import Search from '../components/SearchBar';
+import Modal from '../UI/Modal';
+import Option from '../components/Option';
 
 const Checklists=({navigation})=>{
-    const {state,deleteSelected,hdr,list,misc,setStates,isLoaded,setReqLoad}=useContext(CheckListContext);
-    console.log('Initial state is '+JSON.stringify(state));
+    const {state,deleteSelected,hdr,list,misc,
+        setStates,isLoaded,setReqLoad}=useContext(CheckListContext);
+    //console.log('Initial state is '+JSON.stringify(state));
     const [keyPress,setKeyPress]=useState(false);
+    const [modalVisible,setModalVisible]=useState(false);
+    const [selected,setSelected]=useState('');
 
       const loadData=()=>{
-          console.log('IS LOADED ..? '+isLoaded)
           if(isLoaded&&state.reqLoad){
             if(hdr.length > 0 && list.length > 0 && misc.length>0){
-                console.log('Initial hdr is '+JSON.stringify(hdr));
-                console.log('Initial list is '+JSON.stringify(list));
-                console.log('Initial misc is '+JSON.stringify(misc));
                 setReqLoad();
                 setStates(hdr,list,misc);
                 }
@@ -31,17 +32,36 @@ const Checklists=({navigation})=>{
         });
 
     
+        const showModal=(id)=>{
+            setSelected(id)
+            setModalVisible(!modalVisible)
+        }
 
     return <View style={[styles.view,{backgroundColor:state.bgColor}]}>
         <Search/>
         <View style={styles.cont}>
+            <Modal modalVisible={modalVisible} setModalVisible={setModalVisible} >
+                <Option cont='Edit' id={selected} 
+                        onPress={()=>navigation.navigate('EditList',
+                        {id:selected})}
+                        hide={()=>setModalVisible(!modalVisible)}/>
+                <Option cont='Delete' id={selected} 
+                        onPress={()=>deleteSelected(selected)}
+                        hide={()=>setModalVisible(!modalVisible)}/>
+                <Option cont='Sharing' id={selected} 
+                        onPress={()=>console.log('Sharing '+selected)}
+                        hide={()=>setModalVisible(!modalVisible)}/>
+            </Modal>
+            
             <FlatList
                 data={state.list}
                 keyExtractor={i=>i.id.toString()}
                 renderItem={({item})=>{
                     return <TouchableOpacity
+                                activeOpacity={0.5}
+                                onLongPress={()=>showModal(item.id)}
                                 onPress={()=>navigation.navigate('ListView',{id:item.id})}>
-                            <ListItem item={item} del={deleteSelected} font={state.font}/>
+                            <ListItem item={item} func={()=>showModal(item.id)} font={state.font}/>
                             </TouchableOpacity> 
                 }}
             />
@@ -101,7 +121,7 @@ const styles=StyleSheet.create({
         borderRadius:50,
         marginLeft:4,
         marginTop:3
-    },
+    }
 });
 
 export default Checklists;

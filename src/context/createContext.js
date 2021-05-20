@@ -21,9 +21,19 @@ export default (reducer,actions,initialValue)=>{
         },[]);
 
         const refreshState= ()=>{
+            //   database.ExecuteInsert('delete from list_hdr');
+            //   database.ExecuteInsert('delete from list_dtl');
+            //   database.ExecuteInsert('delete from app_prop');
+            
+            database.CreateTable('create table IF NOT EXISTS list_hdr ( id integer, title varchar(100));');
+            database.CreateTable('create table IF NOT EXISTS list_dtl ( pid integer, id integer, value varchar(100),isSelected varchar(10));');
+            database.CreateTable('create table IF NOT EXISTS app_prop (bgColor varchar(20),font varchar(50));');
+            database.setProps('Select * from app_prop');
             database.getLists('Select * from list_hdr',setHdr);
             database.getLists('Select * from list_dtl',setList);
             database.getLists('Select * from app_prop',setMisc);
+
+
             setIsLoaded(true);
         }
 

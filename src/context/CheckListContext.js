@@ -6,20 +6,22 @@ const reducer=(state,actions)=>{
         case 'add':
             const pid=Math.round(new Date().getTime()/1000);
             const cid=Math.round(new Date().getTime()/10000+1);
-            // database.insertHdr([pid,actions.payload.title]);
-            // actions.payload.clist.forEach(ele=>{
-            //     database.insertDtl([pid,cid,ele.value,false])
-            // })
             addItem(pid,cid,actions.payload.title,actions.payload.clist);
             return {...state,list:[...state.list,{title:actions.payload.title,
                               lists:actions.payload.clist,
                               id:cid,
                               isSelected:false}]}
         case 'check':
+
+                    const value=actions.payload.value;
+                    const parid=actions.payload.pid;
+                    const chid=actions.payload.id;
+                    database.updateCheck([value,parid,chid]);        
+
                  let temp=[...state.list];
-                 let p=temp.findIndex(p=>p.id===actions.payload.pid);
-                 let c=temp[p].lists.findIndex(c=>c.id===actions.payload.id)
-                 temp[p].lists[c].isSelected=actions.payload.value;
+                 let p=temp.findIndex(p=>p.id===parid);
+                 let c=temp[p].lists.findIndex(c=>c.id===chid)
+                 temp[p].lists[c].isSelected=value;
                  return {...state,list:temp};
         case 'deleteSelected':
             deleteItem(state.list,actions.payload)
@@ -42,24 +44,44 @@ const reducer=(state,actions)=>{
                 }
             })};     
         case 'update':
+            //console.log('Update Payload : '+JSON.stringify(actions.payload));
+            const title=actions.payload.title;
+            const id=actions.payload.id;
+            const lists=actions.payload.lists;
+
+            // updating database
+
+            database.updateHdr([title,id]);
+            database.deleteDtl([id]);
+            lists.forEach(ele=>{
+                console.log('update loop'+JSON.stringify(ele))
+                database.insertDtl([id,ele.id,ele.value,ele.isSelected])
+            })
+
+            //updating state
+
             const lis=state.list;
-            const item=lis.find(f=>f.id===actions.payload.id)
-            item.title=actions.payload.title
-            const index=lis.findIndex(f=>f.id===actions.payload.id)
-            lis[index].lists=actions.payload.lists;
+            const item=lis.find(f=>f.id===id)
+            item.title=title;
+            const index=lis.findIndex(f=>f.id===id)
+            lis[index].lists=lists;
             return {...state,list:lis}
         case 'theme':
-            if(state.bgColor==='#071815')
+            if(state.bgColor==='#071815'){
+                database.updateTheme(['#eaf3f1']);
                 return {...state,bgColor:'#eaf3f1'}
+            }
             else{
+                database.updateTheme(['#071815']);
                 return {...state,bgColor:'#071815'}
             }
         case 'font':
+            database.updateFont([actions.payload]);
             return {...state,font:actions.payload}    
         case 'removeAll':
             return {...state,list:[]}        
         case 'setInitial':
-                console.log('hmm'+JSON.stringify(state.hdr));
+                //console.log('hmm'+JSON.stringify(state.hdr));
                 const header=actions.payload.hdr;
                 const detail=actions.payload.list;
                 const bgColor=actions.payload.misc[0].bgColor;
@@ -90,7 +112,7 @@ const reducer=(state,actions)=>{
                 //console.log('LAST CHANCE : '+JSON.stringify(stateObj));
                 return stateObj;      
             case 'setLoad':
-                return {...state,reqLoad:false}    
+                return {...state,reqLoad:false}                        
         default:
             return state;
     }
@@ -108,8 +130,10 @@ const deleteItem=(list,id)=>{
 
 const addItem=(pid,cid,title,clist)=>{
     database.insertHdr([pid,title]);
+    let n=1;
     clist.forEach(ele=>{
-        database.insertDtl([pid,cid,ele.value,false])
+        database.insertDtl([pid,cid+n,ele.value,'false'])
+        n++;
     })
 }
 
@@ -158,7 +182,9 @@ const setReqLoad=dispatch=>()=>{
 }
 
 const setStates=dispatch=>(hdr,list,misc)=>{
-    console.log('Setting temp state'+JSON.stringify(hdr));
+    // console.log('Setting temp state hdr '+JSON.stringify(hdr));
+    // console.log('Setting temp state dtl '+JSON.stringify(list));
+    // console.log('Setting temp state misc'+JSON.stringify(misc));
     dispatch({type:'setInitial',payload:{hdr:hdr,list:list,misc:misc}})
 }
 
@@ -172,7 +198,8 @@ export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                         switchFonts,
                                                         removeAll,
                                                         setStates,
-                                                        setReqLoad
+                                                        setReqLoad,
+                                        
                                                     },
                                                              {list:[
                                                     // {

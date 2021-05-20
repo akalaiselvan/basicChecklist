@@ -3,6 +3,7 @@ import {View,TouchableOpacity,StyleSheet} from 'react-native';
 import {Context as CheckListContext} from '../context/CheckListContext';
 import ListForm from '../components/ListForm';
 import { EvilIcons } from '@expo/vector-icons'; 
+import { HeaderBackButton } from 'react-navigation-stack';
 const ListView=({navigation})=>{
 
     const {state}=useContext(CheckListContext);
@@ -19,7 +20,8 @@ ListView.navigationOptions=({navigation})=>{
                         onPress={()=>navigation.navigate('EditList',
                         {id:navigation.getParam('id')})}>
         <EvilIcons name="pencil" size={35} color="black" />
-    </TouchableOpacity>)    
+    </TouchableOpacity>) ,
+    headerLeft:()=>(<HeaderBackButton onPress={()=>navigation.navigate('Checklists')}/>)   
 }
 };
 
