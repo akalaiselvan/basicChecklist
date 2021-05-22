@@ -5,11 +5,11 @@ const reducer=(state,actions)=>{
     switch(actions.type){
         case 'add':
             const pid=Math.round(new Date().getTime()/1000);
-            const cid=Math.round(new Date().getTime()/10000+1);
-            addItem(pid,cid,actions.payload.title,actions.payload.clist);
+            //const cid=Math.round(new Date().getTime()/10000+1);
+            addItem(pid,actions.payload.title,actions.payload.clist);
             return {...state,list:[...state.list,{title:actions.payload.title,
                               lists:actions.payload.clist,
-                              id:cid,
+                              id:pid,
                               isSelected:false}]}
         case 'check':
 
@@ -68,18 +68,20 @@ const reducer=(state,actions)=>{
             lis[index].lists=lists;
             return {...state,list:lis}
         case 'theme':
-            if(state.bgColor==='#071815'){
-                database.updateTheme(['#eaf3f1']);
-                return {...state,bgColor:'#eaf3f1'}
+            if(state.bgColor==='#FFFFFF'){
+                database.updateTheme(['#121212']);
+                return {...state,bgColor:'#121212'}
             }
             else{
-                database.updateTheme(['#071815']);
-                return {...state,bgColor:'#071815'}
+                database.updateTheme(['#FFFFFF']);
+                return {...state,bgColor:'#FFFFFF'}
             }
         case 'font':
             database.updateFont([actions.payload]);
             return {...state,font:actions.payload}    
         case 'removeAll':
+            database.ExecuteInsert('delete from list_hdr');
+            database.ExecuteInsert('delete from list_dtl');
             return {...state,list:[]}        
         case 'setInitial':
                 //console.log('hmm'+JSON.stringify(state.hdr));
@@ -136,12 +138,12 @@ const deleteItem=(list,id)=>{
     })
 }
 
-const addItem=(pid,cid,title,clist)=>{
+const addItem=(pid,title,clist)=>{
     database.insertHdr([pid,title]);
-    let n=1;
+    //let n=1;
     clist.forEach(ele=>{
-        database.insertDtl([pid,cid+n,ele.value,'false']);
-        n++;
+        database.insertDtl([pid,ele.id,ele.value,'false']);
+        //n++;
     })
 }
 
@@ -221,7 +223,7 @@ export const {Context,Provider}=createContext(reducer,{ addChecklist,
                                                     // id:123202,
                                                     // },
                                                ],
-                                               bgColor:'#071815',
+                                               bgColor:'#121212',
                                                font:'normal',
                                                reqLoad:true
                                             }                                                   

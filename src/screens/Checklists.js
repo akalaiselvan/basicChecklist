@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { View } from 'react-native';
-import {StyleSheet} from 'react-native';
+import { View,Text } from 'react-native';
+import {StyleSheet,Share,ToastAndroid} from 'react-native';
 import {Context as CheckListContext} from '../context/CheckListContext';
 import ListItem from '../components/ListItem';
 import { Feather } from '@expo/vector-icons';
@@ -11,12 +11,20 @@ import Modal from '../UI/Modal';
 import Option from '../components/Option';
 
 const Checklists=({navigation})=>{
+
+
+    const showToast=(content)=>{
+        ToastAndroid.showWithGravity(content,ToastAndroid.SHORT,ToastAndroid.CENTER);
+    }
+
     const {state,deleteSelected,hdr,list,misc,
         setStates,isLoaded,setReqLoad}=useContext(CheckListContext);
-    //console.log('Initial state is '+JSON.stringify(state));
     const [keyPress,setKeyPress]=useState(false);
     const [modalVisible,setModalVisible]=useState(false);
     const [selected,setSelected]=useState('');
+    const [res,showres]=useState(false);
+    const [cont,setCont]=useState('');
+    const [tmpResult,setTempResult]=useState([]);
 
       const loadData=()=>{
           if(isLoaded&&state.reqLoad){
@@ -37,9 +45,64 @@ const Checklists=({navigation})=>{
             setModalVisible(!modalVisible)
         }
 
+        const onShare=(id)=>{
+            const item=state.list.find(t=>t.id===id);
+            const title= item.title;
+            const cont=[];
+            item.lists.forEach(element => {
+                cont.push(element.value);
+            });
+            const res=cont.map(e=>{
+                return "  * "+e+"\n"
+        })
+            try{
+                const result=Share.share({
+                    message:`Checklist Title : ${title} \n\n List Items : \n\n${res.join('')}`
+                    
+                });
+            }catch(error){
+                alert(error.message);
+            }
+        }
+
+        const SearchResults=()=>{
+            if(cont==''){
+                showToast('Give some text to search');
+                return;
+            }
+            setCont('');
+            const lists=state.list;
+            const temp=[];
+            lists.forEach(m=>{
+                if(m.title.toLowerCase().includes(cont.toLocaleLowerCase())){
+                    temp.push({title:m.title,id:m.id})
+                }
+            });
+            if(temp.length==0){
+                showToast('No results found');
+                return;
+            }
+            setTempResult(temp);
+            showres(true);
+        }
+
+        let resHeight=tmpResult.length>10?700:tmpResult.length*60;
     return <View style={[styles.view,{backgroundColor:state.bgColor}]}>
-        <Search/>
+        <Search context={cont} setCon={setCont} doSearch={SearchResults} style={{marginTop:200}}/>
         <View style={styles.cont}>
+        <Modal modalVisible={res} setModalVisible={showres}>
+            <View style={{height:resHeight}}>
+            <FlatList
+                data={tmpResult}
+                keyExtractor={i=>i.id.toString()}
+                renderItem={({item})=>{
+                    return <Option  cont={item.title} 
+                                    onPress={()=>navigation.navigate('ListView',{id:item.id})}
+                                    hide={()=>showres(!res)}/>
+                }}
+            />
+            </View>
+        </Modal>
             <Modal modalVisible={modalVisible} setModalVisible={setModalVisible} >
                 <Option cont='Edit' id={selected} 
                         onPress={()=>navigation.navigate('EditList',
@@ -48,8 +111,8 @@ const Checklists=({navigation})=>{
                 <Option cont='Delete' id={selected} 
                         onPress={()=>deleteSelected(selected)}
                         hide={()=>setModalVisible(!modalVisible)}/>
-                <Option cont='Sharing' id={selected} 
-                        onPress={()=>console.log('Sharing '+selected)}
+                <Option cont='Share' id={selected} 
+                        onPress={()=>onShare(selected)}
                         hide={()=>setModalVisible(!modalVisible)}/>
             </Modal>
             
@@ -61,7 +124,7 @@ const Checklists=({navigation})=>{
                                 activeOpacity={0.5}
                                 onLongPress={()=>showModal(item.id)}
                                 onPress={()=>navigation.navigate('ListView',{id:item.id})}>
-                            <ListItem item={item} func={()=>showModal(item.id)} font={state.font}/>
+                            <ListItem item={item} func={()=>showModal(item.id)} font={state.font} bgColor={state.bgColor}/>
                             </TouchableOpacity> 
                 }}
             />
@@ -70,7 +133,6 @@ const Checklists=({navigation})=>{
         <TouchableHighlight style={keyPress? styles.plusPressed:styles.plus}
                           onHideUnderlay={()=>setKeyPress(false)} 
                           onShowUnderlay={()=>setKeyPress(true)}
-                          underlayColor='red'
                           onPress={()=>navigation.navigate('AddList')}>
             <Feather name='plus' size={40} color='white' />
         </TouchableHighlight>
@@ -82,6 +144,7 @@ const styles=StyleSheet.create({
     view:{
         flex:1,
         justifyContent:'flex-start',
+        
     },
     cont:{
         marginTop:10,
@@ -107,7 +170,7 @@ const styles=StyleSheet.create({
         justifyContent:'center',
         width:50,
         height:50,
-        backgroundColor:'blue',
+        backgroundColor:'#17184B',
         borderRadius:50,
     },
     plusPressed:{
@@ -117,11 +180,22 @@ const styles=StyleSheet.create({
         justifyContent:'center',
         width:50,
         height:50,
-        backgroundColor:'blue',
+        backgroundColor:'#31A2F2',
         borderRadius:50,
         marginLeft:4,
         marginTop:3
     }
 });
+
+
+Checklists.navigationOptions=()=>{
+    return{
+        title:"Checklists",
+    headerTitleStyle:{
+        alignSelf:'center'
+    },
+    }
+    
+}
 
 export default Checklists;

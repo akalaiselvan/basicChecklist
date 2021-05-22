@@ -1,11 +1,18 @@
 import React,{useState,useContext, useRef,useEffect} from 'react';
-import {Button} from 'react-native';
+import {Button,ToastAndroid} from 'react-native';
 import Spacer from '../components/Spacer';
 import ListForm from '../components/ListForm';
 import {View,StyleSheet,TextInput } from 'react-native';
 import {Context as checklistContext} from '../context/CheckListContext';
+import Colors from '../UI/Color'
 
 const AddList=({navigation})=>{
+
+
+    const showToast=(content)=>{
+        ToastAndroid.showWithGravity(content,ToastAndroid.SHORT,ToastAndroid.CENTER);
+    }
+
     const {addChecklist,state}=useContext(checklistContext);
     const [title,setTitle]=useState('');
     const [value,setValue]=useState('');
@@ -13,7 +20,6 @@ const AddList=({navigation})=>{
 
     useEffect(()=>{
         const id=navigation.getParam('id');
-        console.log('getting id '+id)
         if(id){
             const item=state.list.find(t=>t.id===id);
             setTitle(item.title);
@@ -23,6 +29,10 @@ const AddList=({navigation})=>{
     );
 
     const addClist=()=>{
+        if(value==''){
+            showToast("List value can't be empty");
+            return;
+        }
         setclist((prev)=>{
             const lastState=[...prev];
             return [...lastState,{value:value,
@@ -32,9 +42,10 @@ const AddList=({navigation})=>{
     }
 
     const saveChecklist=()=>{
-        console.log('Save clicked')
         if(title===''){
-            addChecklist({title:`${clist[0]} ${clist[1]}`,clist});
+            showToast("Give some title to your list");
+            titRef.current.focus();
+            return;
         }else{
             addChecklist({title,clist});
         }
@@ -45,12 +56,15 @@ const AddList=({navigation})=>{
 
     const listRef=useRef(null);
     const titRef=useRef(null);
+
+    const boxColor=state.bgColor==='#121212'?Colors.darkboxColor:Colors.lightboxColor;
     return <View style={[styles.view,{backgroundColor:state.bgColor}]}>   
         <View>
             <View style={styles.head}>
                 <TextInput autoFocus placeholder='Give some title'
                         ref={titRef}
-                        style={[styles.right,{fontFamily:state.font}]}
+                        style={[styles.right,
+                            {fontFamily:state.font,backgroundColor:boxColor}]}
                         value={title}
                         onChangeText={(v)=>setTitle(v)}
                         onSubmitEditing={()=>listRef.current.focus()}
@@ -58,7 +72,7 @@ const AddList=({navigation})=>{
                 <Spacer/>
                 <TextInput placeholder='Add checklist' 
                     ref={listRef}
-                    style={[styles.input,{fontFamily:state.font}]} 
+                    style={[styles.input,{fontFamily:state.font,backgroundColor:boxColor}]} 
                     value={value} 
                     onChangeText={(v)=>setValue(v)}
                     onSubmitEditing={addClist}
@@ -93,14 +107,22 @@ const styles=StyleSheet.create({
     },
     input:{
         borderColor:'transparent',
-        marginLeft:50
+        marginLeft:40,
+        marginRight:20,
+        borderRadius:10,
+        padding:10
     },
     right:{
-        marginLeft:50
+        marginLeft:40,
+        marginRight:20,
+        marginTop:20,
+        borderRadius:10,
+        padding:10
     },
     content:{
         //backgroundColor:'pink',
-        height:'85%'
+        height:'80%',
+        marginTop:50
     },
     bottom:{
         //backgroundColor:'red',
@@ -112,6 +134,14 @@ const styles=StyleSheet.create({
     },
 });
 
-
+AddList.navigationOptions=()=>{
+    return{
+        title:"Create new list",
+    headerTitleStyle:{
+        alignSelf:'center',
+        marginRight:60
+    },
+    }
+}
 
 export default AddList;

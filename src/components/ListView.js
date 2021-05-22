@@ -9,6 +9,7 @@ const ListView=({navigation})=>{
     const {state}=useContext(CheckListContext);
     const id=navigation.getParam('id');
     const item=state.list.find(t=>t.id===id);
+    //console.log(JSON.stringify(item.lists))
     return <View style={{backgroundColor:state.bgColor}}>
         <ListForm list={item.lists} id={id}/>
     </View>
@@ -16,13 +17,16 @@ const ListView=({navigation})=>{
 
 ListView.navigationOptions=({navigation})=>{
    return {
+    title:"View",
+    headerTitleStyle:{
+        alignSelf:'center'
+    },
     headerRight:()=>(<TouchableOpacity style={{marginRight:25}}
                         onPress={()=>navigation.navigate('EditList',
                         {id:navigation.getParam('id')})}>
         <EvilIcons name="pencil" size={35} color="black" />
     </TouchableOpacity>) ,
-    headerLeft:()=>(<HeaderBackButton onPress={()=>navigation.navigate('Checklists')}/>)   
+    headerLeft:()=>(<HeaderBackButton onPress={()=>navigation.navigate('Checklists')}/>),   
+    };
 }
-};
-
 export default ListView;

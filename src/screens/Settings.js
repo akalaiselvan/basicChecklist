@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import {View,StyleSheet,Text,Alert} from 'react-native'
+import {View,StyleSheet,Alert} from 'react-native'
 import { Ionicons } from '@expo/vector-icons';
 import Setting from '../components/Setting';
 import { FontAwesome } from '@expo/vector-icons';
@@ -10,7 +10,9 @@ import { TouchableOpacity } from 'react-native';
 import {Context as CheckListContext} from '../context/CheckListContext';
 import SelectFont from '../components/SelectFont';
 
+
 const Settings=({navigation})=>{
+
 
     const {switchTheme,removeAll,switchFonts,state:{bgColor,font},state} = useContext(CheckListContext);
     const iconStyle=styles.icon;
@@ -18,7 +20,6 @@ const Settings=({navigation})=>{
     const theme=<Entypo name="feather" color="black" style={iconStyle}/>
     const backup=<MaterialIcons name="backup" color="black" style={iconStyle}/>
     const remove=<MaterialCommunityIcons name="delete-variant" color="black" style={iconStyle}/>
-    const [fs,setsf]=useState(false);
     const switchFont=(value)=>{
         setModalVisible(!modalVisible)
     }
@@ -37,7 +38,6 @@ const Settings=({navigation})=>{
                 ],
                 {
                     cancelable:true,
-                    onDismiss:()=>console.log('Cancelled the alert')
                 });
                 
         const [modalVisible,setModalVisible]=useState(false);
@@ -45,14 +45,16 @@ const Settings=({navigation})=>{
     return <View style={[styles.cont,{backgroundColor:bgColor}]}>
         {<SelectFont switchFonts={switchFonts} modalVisible={modalVisible} setModalVisible={setModalVisible}/>}
         <TouchableOpacity onPress={()=>switchFont()}>
-            <Setting content='Font' Icon={Font} font={font}/>
+            <Setting content='Font' Icon={Font} font={font} bgColor={bgColor}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={switchTheme}>
-            <Setting content='Theme' Icon={theme} font={font}/>
+            <Setting content='Theme' Icon={theme} font={font} bgColor={bgColor}/>
         </TouchableOpacity>
-            <Setting content='Backup/Restore' Icon={backup} font={font}/>
+        {/* <TouchableOpacity >
+            <Setting content='Backup/Restore' Icon={backup} font={font} bgColor={bgColor}/>
+        </TouchableOpacity> */}
         <TouchableOpacity onPress={()=>showAlert('Wish to delete all Lists',removeAll)}>
-            <Setting content='Remove All' Icon={remove} font={font}/>
+            <Setting content='Remove All' Icon={remove} font={font} bgColor={bgColor}/>
         </TouchableOpacity>
     </View>
 }
