@@ -1,6 +1,7 @@
 import createContext from './createContext';
 import {database} from '../DB/database';
 
+
 const reducer=(state,actions)=>{
     switch(actions.type){
         case 'add':
@@ -124,7 +125,7 @@ const reducer=(state,actions)=>{
 const updateAfterDrag=(id,list)=>{
     database.deleteDtl([id]);
     list.forEach(ele=>{
-        database.insertDtl([ele.pid,ele.id,ele.value,ele.isSelected]);
+        database.insertDtl([id,ele.id,ele.value,ele.isSelected]);
     });
 }
 

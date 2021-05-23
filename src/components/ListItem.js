@@ -41,13 +41,15 @@ const styles=StyleSheet.create({
     item:{
         height:60,
         marginTop:10,
-        backgroundColor:'#f0ffff',
+        //backgroundColor:'#f0ffff',
         flexDirection:'row',
         paddingTop:5,
         paddingBottom:5,
-        borderRadius:20,
         marginLeft:10,
-        marginRight:10
+        marginRight:10,
+        borderRadius:15,
+        borderColor:'#000000',
+
     },
     text:{
         flex:1,

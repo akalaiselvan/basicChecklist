@@ -23,6 +23,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF",
+        "backgroundImage": "./assets/adaptive-icon.png",
       },
       "package": "com.check.list"
     },
